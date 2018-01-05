@@ -1,0 +1,5 @@
+Exclude.h
+Environment.h
+support.h
+Everything.h
+*.exe
