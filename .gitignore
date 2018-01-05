@@ -3,3 +3,7 @@ Environment.h
 support.h
 Everything.h
 *.exe
+OPTIONS.C
+test2.txt
+test1.txt
+*.o

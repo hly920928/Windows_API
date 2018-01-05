@@ -20,5 +20,13 @@ void myReportError(LPCTSTR userMessage,DWORD exitCode,
                     }
                        if(exitCode>0)ExitProcess(exitCode);
                     }
-
+void CatFile(HANDLE hInFile,HANDLE hOutFile){
+    DWORD nIn,nOut;
+    BYTE buffer[BUF_SIZE];
+    while(ReadFile(hInFile,buffer,BUF_SIZE,&nIn,NULL)
+    &&(nIn!=0)
+    &&WriteFile(hOutFile,buffer,nIn,&nOut,NULL)
+    );
+    return;
+}
 
