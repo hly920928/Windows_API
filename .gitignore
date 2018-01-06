@@ -7,3 +7,6 @@ OPTIONS.C
 test2.txt
 test1.txt
 *.o
+Win_API.layout
+*.txt
+*.dev
