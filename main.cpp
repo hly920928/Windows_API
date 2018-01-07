@@ -2,12 +2,10 @@
 #include "myHeader.h"
 #include <iostream>
 int main(int argc, char* argv[]) {
-	if(argv[1]==0){
-		printf("In cci_f\n");
-		return 0;
-	}
-	//printf("%s\n",argv[0]);
-	cci_f(argv[1],argv[2],atoi(argv[3]));
+	char pwdBuffer[999];
+	DWORD lenCurDir;
+	lenCurDir=GetCurrentDirectory(999,pwdBuffer);
+    PrintMsg(GetStdHandle(STD_OUTPUT_HANDLE),pwdBuffer);
 	return 0;
 }
 
