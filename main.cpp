@@ -1,12 +1,19 @@
 #include "Everything.h"
 #include "myHeader.h"
 #include <iostream>
+struct myStru{
+	DWORD a;
+	DWORD b;
+	DWORD c;
+};
 int main(int argc, char* argv[]) {
    char Flag=' ';
+ 
    HANDLE hFile;
-   DWORD curPtr;
+   LARGE_INTEGER curPtr;
    DWORD openOption,nXfer,recNo;
    _RECORD record;
+     /*
    CHAR string[STRING_SIZE],command,extra;
    OVERLAPPED ov={0,0,0,0,NULL},ovZero={0,0,0,0,NULL};
    _HEADER header={0,0};
@@ -14,8 +21,9 @@ int main(int argc, char* argv[]) {
    BOOLEAN headerChange,recordChange;
     //printf("argc = %d\n",argc);
    printf("Please InPut File Name\n");
-   CHAR FileName[STRING_SIZE];
-   scanf("%s",FileName);
+   */
+   CHAR FileName[STRING_SIZE]="t123.txt\0";
+
    //printf("%s\n",FileName);
    printf("Create New File Y:N \n");
    std::cin>>Flag;
@@ -27,21 +35,39 @@ int main(int argc, char* argv[]) {
    NULL,openOption,FILE_FLAG_RANDOM_ACCESS,NULL);
    //create new File
    if(Flag=='Y'){
-       header.numRecords=777;
-       WriteFile(hFile,&header,sizeof(header),&nXfer,&ovZero);
-       record.referenceCount=333;
-       WriteFile(hFile,&record,sizeof(record),&nXfer,&ovZero);
-       //SetEndOfFile(hFile);
+       DWORD temp=777;
+       WriteFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
+       //curPtr.QuadPart=(LONGLONG)sizeof(header);
+       //SetFilePointerEx(hFile,curPtr,NULL,FILE_BEGIN);
+       temp=669999;
+       WriteFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
+       temp=78775;
+       WriteFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
+       myStru st={4,5,6};
+       WriteFile(hFile,&st,sizeof(st),&nXfer,NULL);
+       SetEndOfFile(hFile);
         printf("Create File OK\n");
         return 0;
    }
    ////
    std::cout<<"Open "<<FileName<<std::endl;
    //SetFilePointerEx(hFile,(LARGE_INTEGER)curPtr,NULL,FILE_BEGIN);
-   ReadFile(hFile,&header,sizeof(header),&nXfer,NULL);
-   std::cout<<"header.numRecords "<<header.numRecords<<std::endl;
-   ReadFile(hFile,&record,sizeof(record),&nXfer,NULL);
-   std::cout<<"record.referenceCount "<<record.referenceCount<<std::endl;
+   //curPtr.QuadPart=(LONGLONG)sizeof(header);
+   //SetFilePointerEx(hFile,curPtr,NULL,FILE_BEGIN);
+   DWORD temp=3333;
+   ReadFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
+   printf("test1 %d\n",temp);
+   ReadFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
+   printf("test2 %d\n",temp);
+   curPtr.QuadPart=(LONGLONG)0;
+   SetFilePointerEx(hFile,curPtr,NULL,FILE_BEGIN);
+   ReadFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
+   printf("test3 %d\n",temp);
+   myStru st;
+   curPtr.QuadPart=-1*(LONGLONG)sizeof(st);
+   SetFilePointerEx(hFile,curPtr,NULL,FILE_END);
+   ReadFile(hFile,&st,sizeof(st),&nXfer,NULL);
+   printf("test4 %d %d %d\n",st.a,st.b,st.c);;
    /*
    
    HANDLE hIn,hOut;
