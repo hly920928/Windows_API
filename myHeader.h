@@ -1,7 +1,19 @@
 #include "Everything.h"
 #include <stdarg.h>
 #define BUF_SIZE 0x200
+#define STRING_SIZE 200
 extern "C"
+struct _RECORD { 
+		DWORD			referenceCount; 
+		SYSTEMTIME		recordCreationTime;
+		SYSTEMTIME		recordLastRefernceTime;
+		SYSTEMTIME		recordUpdateTime;
+		CHAR			dataString[STRING_SIZE];
+	} ;
+ struct _HEADER { /* File header descriptor */
+		DWORD			numRecords;
+		DWORD			numNonEmptyRecords;
+	};
 void myReportError(LPCTSTR userMessage,DWORD exitCode,
                 BOOL printErrorMessage);
 void CatFile(HANDLE,HANDLE);
