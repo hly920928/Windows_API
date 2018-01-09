@@ -88,7 +88,7 @@ BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo){
     CloseHandle(hIn);    CloseHandle(hOut);
     return success;
 }
-BOOL TraverseDirectory(LPCTSTR pathName,DWORD numFlags,LPBOOL flags){
+BOOL TraverseDirectory(LPCTSTR FileName,LPCTSTR DirName,DWORD numFlags,LPBOOL flags){
     HANDLE searchHandle;
     WIN32_FIND_DATA findData;
     BOOL recursive=flags[0];
@@ -96,15 +96,17 @@ BOOL TraverseDirectory(LPCTSTR pathName,DWORD numFlags,LPBOOL flags){
     CHAR currPath[MAX_PATH+1];
     GetCurrentDirectory(MAX_PATH,currPath);
     for(iPass=1;iPass<=2;iPass++){
-        searchHandle=FindFirstFile(pathName,&findData);
+        searchHandle=(iPass==1)?FindFirstFile(FileName,&findData):
+        FindFirstFile(DirName,&findData);
         do{
             fType=FileType(&findData);
             if(iPass==1)
                 ProcessItem(&findData,MAX_OPTION,flags);
             if(fType==TYPE_DIR&&iPass==2&&recursive){
-                printf("\n%s\\%s",currPath,findData.cFileName);
+                if(strcmp(findData.cFileName,".git")==0)continue;
+                printf("Down To %s\n",findData.cFileName);
                 SetCurrentDirectory(findData.cFileName);
-                TraverseDirectory("*",numFlags,flags);
+                TraverseDirectory(FileName,DirName,numFlags,flags);
                 SetCurrentDirectory("..");
             }
             }while(FindNextFile(searchHandle,&findData));
@@ -112,9 +114,36 @@ BOOL TraverseDirectory(LPCTSTR pathName,DWORD numFlags,LPBOOL flags){
     }
     return TRUE;
 }
-BOOL FileType(LPWIN32_FIND_DATA pFileData){
-    return FALSE;
+BOOL ProcessItem(LPWIN32_FIND_DATA pFileData, DWORD numFlags, LPBOOL flags){
+    const char fileTypeChar[]={' ','d'};
+    DWORD fType=FileType(pFileData);
+    BOOL longList =flags[0];
+   SYSTEMTIME lastWrite;
+   if (fType != TYPE_FILE && fType != TYPE_DIR) return FALSE;
+   CHAR currPath[MAX_PATH+1];
+   GetCurrentDirectory(MAX_PATH,currPath);
+   printf("currPath %s\n",currPath);
+   if (longList) {
+		printf("%c ", fileTypeChar[fType - 1]);
+		printf("%d ", pFileData->nFileSizeLow);
+		FileTimeToSystemTime(&(pFileData->ftLastWriteTime), &lastWrite);
+		printf("%d/ %d/ %d %d: %d: %d",
+				lastWrite.wMonth, lastWrite.wDay,
+				lastWrite.wYear, lastWrite.wHour,
+				lastWrite.wMinute, lastWrite.wSecond);
+	}
+    printf(" %s\n", pFileData->cFileName);
+	return TRUE;
 }
-BOOL ProcessItem(LPWIN32_FIND_DATA,DWORD,LPBOOL){
-    return FALSE;
+DWORD FileType(LPWIN32_FIND_DATA pFileData){
+    BOOL isDir;
+	DWORD fType;
+	fType = TYPE_FILE;
+	isDir =(pFileData->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+	if (isDir)
+		if (strcmp(pFileData->cFileName, ".") == 0
+				|| strcmp(pFileData->cFileName, "..") == 0)
+			fType = TYPE_DOT;
+		else fType = TYPE_DIR;
+	return fType;
 }

@@ -22,6 +22,6 @@ BOOL cci_f(LPCTSTR fIn,LPCTSTR fOut,DWORD shift);
 BOOL PrintStrings(HANDLE hOut,...);
 BOOL PrintMsg(HANDLE hOut,LPCTSTR pMsg);
 BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo);
-BOOL TraverseDirectory(LPCTSTR lpDir,DWORD,LPBOOL);
-BOOL FileType(LPWIN32_FIND_DATA);
+BOOL TraverseDirectory(LPCTSTR,LPCTSTR,DWORD,LPBOOL);
+DWORD FileType(LPWIN32_FIND_DATA);
 BOOL ProcessItem(LPWIN32_FIND_DATA,DWORD,LPBOOL);
