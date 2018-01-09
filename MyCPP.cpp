@@ -88,3 +88,33 @@ BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo){
     CloseHandle(hIn);    CloseHandle(hOut);
     return success;
 }
+BOOL TraverseDirectory(LPCTSTR pathName,DWORD numFlags,LPBOOL flags){
+    HANDLE searchHandle;
+    WIN32_FIND_DATA findData;
+    BOOL recursive=flags[0];
+    DWORD fType,iPass;
+    CHAR currPath[MAX_PATH+1];
+    GetCurrentDirectory(MAX_PATH,currPath);
+    for(iPass=1;iPass<=2;iPass++){
+        searchHandle=FindFirstFile(pathName,&findData);
+        do{
+            fType=FileType(&findData);
+            if(iPass==1)
+                ProcessItem(&findData,MAX_OPTION,flags);
+            if(fType==TYPE_DIR&&iPass==2&&recursive){
+                printf("\n%s\\%s",currPath,findData.cFileName);
+                SetCurrentDirectory(findData.cFileName);
+                TraverseDirectory("*",numFlags,flags);
+                SetCurrentDirectory("..");
+            }
+            }while(FindNextFile(searchHandle,&findData));
+          FindClose(searchHandle);
+    }
+    return TRUE;
+}
+BOOL FileType(LPWIN32_FIND_DATA pFileData){
+    return FALSE;
+}
+BOOL ProcessItem(LPWIN32_FIND_DATA,DWORD,LPBOOL){
+    return FALSE;
+}

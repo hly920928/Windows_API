@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     //printf("argc = %d\n",argc);
    printf("Please InPut File Name\n");
    */
-   CHAR FileName[STRING_SIZE]="t123.txt\0";
+   CHAR FileName[STRING_SIZE]="E:\\MFC_TEST\\GCC\\Windows_API\\sub\\123456.txt\0";
 
    //printf("%s\n",FileName);
    printf("Create New File Y:N \n");
@@ -54,11 +54,12 @@ int main(int argc, char* argv[]) {
    //SetFilePointerEx(hFile,(LARGE_INTEGER)curPtr,NULL,FILE_BEGIN);
    //curPtr.QuadPart=(LONGLONG)sizeof(header);
    //SetFilePointerEx(hFile,curPtr,NULL,FILE_BEGIN);
-   DWORD temp=3333;
-   ReadFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
-   printf("test1 %d\n",temp);
-   ReadFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
-   printf("test2 %d\n",temp);
+   char str[999];
+   ReadFile(hFile,str,9,&nXfer,NULL);
+   printf("test1 %s\n",str);
+   ReadFile(hFile,str,9,&nXfer,NULL);
+   printf("test2 %s\n",str);
+  /*
    curPtr.QuadPart=(LONGLONG)0;
    SetFilePointerEx(hFile,curPtr,NULL,FILE_BEGIN);
    ReadFile(hFile,&temp,sizeof(temp),&nXfer,NULL);
@@ -68,6 +69,8 @@ int main(int argc, char* argv[]) {
    SetFilePointerEx(hFile,curPtr,NULL,FILE_END);
    ReadFile(hFile,&st,sizeof(st),&nXfer,NULL);
    printf("test4 %d %d %d\n",st.a,st.b,st.c);;
+  *
+  /
    /*
    
    HANDLE hIn,hOut;
