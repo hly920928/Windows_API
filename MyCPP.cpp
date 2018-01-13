@@ -147,3 +147,46 @@ DWORD FileType(LPWIN32_FIND_DATA pFileData){
 		else fType = TYPE_DIR;
 	return fType;
 }
+BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags){
+    
+    return FALSE;
+}
+BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,LPBOOL flags){
+    LPBYTE pV = value;
+	DWORD i;
+
+	printf("\n%s = ", valueName);
+    return FALSE;
+    switch (valueType) {
+	case REG_FULL_RESOURCE_DESCRIPTOR: 
+	case REG_BINARY:  
+		for (i = 0; i < valueLen; i++, pV++)
+			printf(" %x", *pV);
+		break;
+
+	case REG_DWORD:{
+        printf("%x", (DWORD)*value);
+		break;
+    } 
+		
+	case REG_EXPAND_SZ:
+	case REG_MULTI_SZ:
+	case REG_SZ:{
+        printf("%s", (LPTSTR)value);
+		break;
+    }	
+	case REG_DWORD_BIG_ENDIAN:
+	case REG_LINK:
+	case REG_NONE: 
+	case REG_RESOURCE_LIST:
+ 	default:{
+          printf(" ** Cannot display value of type: %d. Exercise for reader\n", valueType);
+		break;
+     }
+	}
+
+	return TRUE;
+}
+BOOL DisplaySubKey(LPTSTR keyName, LPTSTR subKeyName, PFILETIME pLastWrite, LPBOOL flags){
+    return FALSE;
+}

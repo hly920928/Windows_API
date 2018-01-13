@@ -25,3 +25,7 @@ BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo);
 BOOL TraverseDirectory(LPCTSTR,LPCTSTR,DWORD,LPBOOL);
 DWORD FileType(LPWIN32_FIND_DATA);
 BOOL ProcessItem(LPWIN32_FIND_DATA,DWORD,LPBOOL);
+//About Registry
+BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags);
+BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,LPBOOL flags);
+BOOL DisplaySubKey(LPTSTR keyName, LPTSTR subKeyName, PFILETIME pLastWrite, LPBOOL flags);
