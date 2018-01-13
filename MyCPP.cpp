@@ -188,5 +188,17 @@ BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,
 	return TRUE;
 }
 BOOL DisplaySubKey(LPTSTR keyName, LPTSTR subKeyName, PFILETIME pLastWrite, LPBOOL flags){
-    return FALSE;
+    BOOL longList = FALSE;
+	SYSTEMTIME sysLastWrite;
+
+	printf("\n%s", keyName);
+	if (strlen(subKeyName) > 0) printf("\\%s ", subKeyName);
+	if (longList) {
+		FileTimeToSystemTime(pLastWrite, &sysLastWrite);
+		printf(" %02d/%02d/%04d %02d:%02d:%02d",
+				sysLastWrite.wMonth, sysLastWrite.wDay,
+				sysLastWrite.wYear, sysLastWrite.wHour,
+				sysLastWrite.wMinute, sysLastWrite.wSecond);
+	}
+	return TRUE;
 }
