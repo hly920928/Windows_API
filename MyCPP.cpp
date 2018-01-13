@@ -188,7 +188,7 @@ BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags
 			DisplaySubKey(fullKeyName, subKeyName, &lastWriteTime, flags);
 			/*  Display subkey components if -R is specified */
 			if (recursive) {
-                //_stprintf() https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/sprintf-sprintf-l-swprintf-swprintf-l-swprintf-l
+                //stprintf() 
                 //similar to C++ stringstream
 				sprintf(fullSubKeyName, _T("%s\\%s"), fullKeyName, subKeyName);
 				TraverseRegistry(hSubKey, fullSubKeyName, subKeyName, flags);
@@ -200,6 +200,7 @@ BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags
 	free(subKeyName); 
 	free(valueName);
 	free(value);
+    RegCloseKey(hSubKey);
     return TRUE;
 }
 BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,LPBOOL flags){
@@ -207,7 +208,6 @@ BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,
 	DWORD i;
 
 	printf("\n%s = ", valueName);
-    return FALSE;
     switch (valueType) {
 	case REG_FULL_RESOURCE_DESCRIPTOR: 
 	case REG_BINARY:  
@@ -216,7 +216,7 @@ BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,
 		break;
 
 	case REG_DWORD:{
-        printf("%x", (DWORD)*value);
+        printf("%d",*(DWORD*)value);
 		break;
     } 
 		
