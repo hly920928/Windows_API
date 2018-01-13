@@ -148,8 +148,59 @@ DWORD FileType(LPWIN32_FIND_DATA pFileData){
 	return fType;
 }
 BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags){
-    
-    return FALSE;
+    HKEY hSubKey;
+	BOOL recursive = TRUE;
+	LONG result;
+	DWORD valueType, index;
+	DWORD numSubKeys, maxSubKeyLen, numValues, maxValueNameLen, maxValueLen;
+	DWORD subKeyNameLen, valueNameLen, valueLen;
+	FILETIME lastWriteTime;
+	LPTSTR subKeyName, valueName;
+	LPBYTE value;
+    char fullSubKeyName[MAX_PATH+1];
+    //About RegOpenKeyEx()
+    if (RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hSubKey) != ERROR_SUCCESS)return FALSE;
+    //About RegQueryInfoKey()
+    if (RegQueryInfoKey(hSubKey, NULL, NULL, NULL, &numSubKeys, &maxSubKeyLen, NULL, &numValues, &maxValueNameLen, &maxValueLen, 
+		NULL, &lastWriteTime) != ERROR_SUCCESS)return FALSE;
+    //malloc
+	subKeyName = (char*)malloc(sizeof(char) * (maxSubKeyLen+1));  
+    valueName  = (char*)malloc(sizeof(char) * (maxValueNameLen+1));
+	value      = (unsigned char*)malloc(maxValueLen);
+    //Display All Pair
+    for (index = 0; index < numValues; index++) {
+		valueNameLen = maxValueNameLen + 1; //Both I/O see https://msdn.microsoft.com/en-us/library/windows/desktop/ms724865(v=vs.85).aspx
+		valueLen     = maxValueLen + 1;     //Like Above
+        //About RegEnumValue()
+		result = RegEnumValue(hSubKey, index, valueName, &valueNameLen, NULL,
+				&valueType, value, &valueLen);
+		if (result == ERROR_SUCCESS && GetLastError() == 0)
+			DisplayPair(valueName, valueType, value, valueLen, flags);
+		
+	}
+    //Recursively to All SubKey
+    for (index = 0; index < numSubKeys; index++) {
+		subKeyNameLen = maxSubKeyLen + 1;
+        //About RegEnumKeyEx()
+		result = RegEnumKeyEx(hSubKey, index, subKeyName, &subKeyNameLen, NULL,
+				NULL, NULL, &lastWriteTime);
+		if (GetLastError() == 0) {
+			DisplaySubKey(fullKeyName, subKeyName, &lastWriteTime, flags);
+			/*  Display subkey components if -R is specified */
+			if (recursive) {
+                //_stprintf() https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/sprintf-sprintf-l-swprintf-swprintf-l-swprintf-l
+                //similar to C++ stringstream
+				sprintf(fullSubKeyName, _T("%s\\%s"), fullKeyName, subKeyName);
+				TraverseRegistry(hSubKey, fullSubKeyName, subKeyName, flags);
+			}
+		}
+	}
+    printf("\n");
+    //free 
+	free(subKeyName); 
+	free(valueName);
+	free(value);
+    return TRUE;
 }
 BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,LPBOOL flags){
     LPBYTE pV = value;
