@@ -1,10 +1,10 @@
 #include "myHeader.h" 
 
-void myReportError(LPCTSTR userMessage,DWORD exitCode,
+void ReportError(LPCTSTR userMessage,DWORD exitCode,
                 BOOL printErrorMessage){
                     DWORD eMegLen,errNum=GetLastError();
                     LPTSTR lpvSysMsg;
-                    _ftprintf(stderr,_T("%s\n"),userMessage);
+                    fprintf(stderr,_T("%s\n"),userMessage);
                     if(printErrorMessage){
                         eMegLen=FormatMessage(
                             FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM,
@@ -12,14 +12,15 @@ void myReportError(LPCTSTR userMessage,DWORD exitCode,
                             MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),
                             (LPTSTR)&lpvSysMsg,0,NULL);
                       if(eMegLen>0){
-                          _ftprintf(stderr,"%s\n",lpvSysMsg);
+                          fprintf(stderr,"%s\n",lpvSysMsg);
                       }else{
-                          _ftprintf(stderr,_T("Last Error Number;%d.\n"),errNum);
+                          fprintf(stderr,_T("Last Error Number;%d.\n"),errNum);
                       }
                       if(lpvSysMsg!=NULL)LocalFree(lpvSysMsg);
                     }
                        if(exitCode>0)ExitProcess(exitCode);
                     }
+
 void CatFile(HANDLE hInFile,HANDLE hOutFile){
     DWORD nIn,nOut;
     BYTE buffer[BUF_SIZE];
@@ -84,7 +85,7 @@ BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo){
      &&ReadConsole(hIn,pResponse,maxChar-2,&charIn,NULL);
     if(success)
       pResponse[charIn-2]='\0';
-      else myReportError("ConsolePrompt failure.",0,TRUE);
+      else ReportError("ConsolePrompt failure.",0,TRUE);
     CloseHandle(hIn);    CloseHandle(hOut);
     return success;
 }
