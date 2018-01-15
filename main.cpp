@@ -2,8 +2,6 @@
 #include "myHeader.h"
 #include <iostream>
 #include <float.h>
-
-
 int main(int argc, char* argv[]) {
 	//open float Point exception control
 	DWORD fpOld,fpNew;

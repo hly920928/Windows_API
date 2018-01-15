@@ -29,3 +29,4 @@ BOOL ProcessItem(LPWIN32_FIND_DATA,DWORD,LPBOOL);
 BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags);
 BOOL DisplayPair(LPTSTR valueName, DWORD valueType,LPBYTE value, DWORD valueLen,LPBOOL flags);
 BOOL DisplaySubKey(LPTSTR keyName, LPTSTR subKeyName, PFILETIME pLastWrite, LPBOOL flags);
+void ReportException(LPCTSTR userMessage,DWORD exceptionCode);
