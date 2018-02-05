@@ -1,10 +1,10 @@
 #include "myHeader.h" 
 
-void ReportError(LPCTSTR userMessage,DWORD exitCode,
+void ReportError(const char* userMessage,DWORD exitCode,
                 BOOL printErrorMessage){
                     DWORD eMegLen,errNum=GetLastError();
                     LPTSTR lpvSysMsg;
-                    fprintf(stderr,_T("%s\n"),userMessage);
+                    fprintf(stderr,"%s\n",userMessage);
                     if(printErrorMessage){
                         eMegLen=FormatMessage(
                             FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM,
@@ -14,7 +14,7 @@ void ReportError(LPCTSTR userMessage,DWORD exitCode,
                       if(eMegLen>0){
                           fprintf(stderr,"%s\n",lpvSysMsg);
                       }else{
-                          fprintf(stderr,_T("Last Error Number;%d.\n"),errNum);
+                          fprintf(stderr,"Last Error Number;%d.\n",errNum);
                       }
                       if(lpvSysMsg!=NULL)LocalFree(lpvSysMsg);
                     }
@@ -30,7 +30,7 @@ void CatFile(HANDLE hInFile,HANDLE hOutFile){
     );
     return;
 }
-BOOL cci_f(LPCTSTR fIn,LPCTSTR fOut,DWORD shift){
+BOOL cci_f(const char* fIn, const char* fOut,DWORD shift){
     HANDLE hIn,hOut;
     DWORD nIn,nOut,iCopy;
     CHAR aBuffer[BUF_SIZE],ccBuffer[BUF_SIZE];
@@ -50,23 +50,23 @@ BOOL cci_f(LPCTSTR fIn,LPCTSTR fOut,DWORD shift){
 }
 BOOL PrintStrings(HANDLE hOut,...){
     DWORD msgLen,count;
-    LPCTSTR pMsg;
+    const char* pMsg;
     va_list pMsgList;
     va_start(pMsgList,hOut);
-    while((pMsg=va_arg(pMsgList,LPCTSTR))!=NULL){
+    while((pMsg=va_arg(pMsgList, const char*))!=NULL){
         msgLen=strlen(pMsg);
         if(!WriteConsole(hOut,pMsg,msgLen,&count,NULL)){
-             if(!WriteFile(hOut,pMsg,msgLen*sizeof(TCHAR),&count,NULL)){
+             if(!WriteFile(hOut,pMsg,msgLen*sizeof(char),&count,NULL)){
                  va_end(pMsgList);return FALSE;
              }
         }
     }
      va_end(pMsgList);return TRUE;
 }
-BOOL PrintMsg(HANDLE hOut,LPCTSTR pMsg){
+BOOL PrintMsg(HANDLE hOut,const char* pMsg){
     return PrintStrings(hOut,pMsg,NULL);
 }
-BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo){
+BOOL ConsolePrompt(const char* pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo){
    HANDLE hIn,hOut;
    DWORD charIn,echoFlag;
    BOOL success;
@@ -89,12 +89,12 @@ BOOL ConsolePrompt(LPCTSTR pPromptMsg,LPTSTR pResponse,DWORD maxChar,BOOL echo){
     CloseHandle(hIn);    CloseHandle(hOut);
     return success;
 }
-BOOL TraverseDirectory(LPCTSTR FileName,LPCTSTR DirName,DWORD numFlags,LPBOOL flags){
+BOOL TraverseDirectory(char* FileName,const char* DirName,DWORD numFlags,LPBOOL flags){
     HANDLE searchHandle;
     WIN32_FIND_DATA findData;
     BOOL recursive=flags[0];
     DWORD fType,iPass;
-    CHAR currPath[MAX_PATH+1];
+	TCHAR currPath[MAX_PATH+1];
     GetCurrentDirectory(MAX_PATH,currPath);
     for(iPass=1;iPass<=2;iPass++){
         searchHandle=(iPass==1)?FindFirstFile(FileName,&findData):
@@ -254,7 +254,7 @@ BOOL DisplaySubKey(LPTSTR keyName, LPTSTR subKeyName, PFILETIME pLastWrite, LPBO
 	}
 	return TRUE;
 }
-void ReportException(LPCTSTR userMessage,DWORD exceptionCode){
+void ReportException(const char* userMessage,DWORD exceptionCode){
     ReportError(userMessage,0,TRUE);
     if(exceptionCode!=0){
         RaiseException((0x0FFFFFFF)&exceptionCode|0xE0000000,0,0,NULL);
